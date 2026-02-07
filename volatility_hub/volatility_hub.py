@@ -1,8 +1,8 @@
 import json
+import os
 import time
 import requests
 
-RAPID_API_URL = "https://volatlityhub.p.rapidapi.com/"
 
 def pretty_print_stocks(data):
     if not data:
@@ -67,7 +67,15 @@ def pretty_print_vol_data(vol_data):
 if __name__ == "__main__":
 
     # Your x-rapidapi-key
-    RAPID_API_KEY = "YOUR X-RAPIDAPI-KEY"
+    RAPID_API_KEY = os.getenv("RAPID_API_KEY")
+    RAPID_API_URL = os.getenv(
+        "RAPID_API_URL",
+        "https://volatlityhub.p.rapidapi.com/"
+    )
+
+    if not RAPID_API_KEY:
+        raise RuntimeError("RAPID_API_KEY environment variable is not set")
+
     payload = {}
     headers = {
         "x-rapidapi-key": RAPID_API_KEY,
@@ -75,9 +83,6 @@ if __name__ == "__main__":
         "Content-Type": "application/json"
     }
 
-
-
-    #################################### Filing Dates ############################################
     print("\nRetrieving underlying symbols...")
     time.sleep(1)
     response = requests.post(url=RAPID_API_URL + "/underlying_symbols/", json=payload, headers=headers)
@@ -108,3 +113,9 @@ if __name__ == "__main__":
     response = requests.post(url=RAPID_API_URL + "/volatility/", json=payload, headers=headers)
     underlying_symbols = response.json()
     pretty_print_vol_data(underlying_symbols)
+
+    print("\nRetrieving vol hub data...")
+    time.sleep(1)
+    response = requests.post(url=RAPID_API_URL + "/vol_snapshot/", json=payload, headers=headers)
+    vol_snapshot = response.json()
+    print(vol_snapshot)

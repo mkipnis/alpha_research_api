@@ -1,8 +1,8 @@
 import json
+import os
 import time
 import requests
 
-RAPID_API_URL = "https://stock-ownership-intel.p.rapidapi.com/"
 
 def print_holdings_columns(data, key=None):
     dates = sorted(
@@ -35,7 +35,15 @@ def print_holdings_columns(data, key=None):
 if __name__ == "__main__":
 
     # Your x-rapidapi-key
-    RAPID_API_KEY = "YOUR X-RAPIDAPI-KEY"
+    RAPID_API_KEY = os.getenv("RAPID_API_KEY")
+    RAPID_API_URL = os.getenv(
+        "RAPID_API_URL",
+        "https://stock-ownership-intel.p.rapidapi.com/"
+    )
+
+    if not RAPID_API_KEY:
+        raise RuntimeError("RAPID_API_KEY environment variable is not set")
+
     payload = {}
     headers = {
         "x-rapidapi-key": RAPID_API_KEY,
