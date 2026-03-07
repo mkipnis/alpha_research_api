@@ -1,4 +1,4 @@
-# Copyright (c) Mike Kipnis - Alpha Research Online
+# Copyright (c) Mike Kipnis (mike.kipnis@gmail.com) - Alpha Research Online
 
 import os
 import logging
