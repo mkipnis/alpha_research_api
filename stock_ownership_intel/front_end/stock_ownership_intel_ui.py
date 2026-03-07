@@ -43,7 +43,7 @@ logging.basicConfig(
 logger = logging.getLogger("StockOwnershipIntel")
 
 # ----------------------------
-# LiquiBook Sandbox class
+# StockOwnershipIntel class
 # ----------------------------
 class StockOwnershipIntel:
     def __init__(self, app: dash.Dash):
