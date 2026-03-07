@@ -1,3 +1,5 @@
+# Copyright (c) Mike Kipnis (mike.kipnis@gmail.com) - Alpha Research Online
+
 import json
 import os
 import time
