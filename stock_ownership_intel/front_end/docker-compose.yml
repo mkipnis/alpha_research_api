@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  stock-ownership-intel-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stock-ownership-intel-ui
+    container_name: stock-ownership-intel-ui
+    ports:
+      - "8050:8050"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    command: >
+      gunicorn stock_ownership_intel_ui:server
+      --bind 0.0.0.0:8050
+      --workers 4
+      --worker-class gthread
+    restart: unless-stopped

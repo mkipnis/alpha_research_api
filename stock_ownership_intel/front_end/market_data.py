@@ -114,7 +114,7 @@ class MarketData(object):
             #)
             week_52_str = ""
             if 'low_52_week' in week_52 and 'high_52_week' in week_52:
-                week_52_str = f'{week_52['low_52_week']} - {week_52['high_52_week']}'
+                week_52_str = f"{week_52['low_52_week']} - {week_52['high_52_week']}"
 
             market_data_rows.append(
                 {
@@ -125,7 +125,7 @@ class MarketData(object):
 
             ytd_str = ""
             if 'ytd_first_close' in ytd_data and 'ytd_last_close' in ytd_data:
-                ytd_str = f'{ytd_data['ytd_first_close']} - {ytd_data['ytd_last_close']}'
+                ytd_str = f"{ytd_data['ytd_first_close']} - {ytd_data['ytd_last_close']}"
 
             market_data_rows.append(
                 {
@@ -134,7 +134,7 @@ class MarketData(object):
                 }
             )
 
-            price_str = f'{price['real_time_price']} {price['price_change']} ({price['change_percent']}%)'
+            price_str = f"{price['real_time_price']} {price['price_change']} ({price['change_percent']}%)"
             market_data_rows.append(
                 {
                     "key":"Price",
@@ -143,7 +143,7 @@ class MarketData(object):
             )
 
 
-            volume_str = f'{int(price['volume']):,}'
+            volume_str = f"{int(price['volume']):,}"
             market_data_rows.append(
                 {
                     "key":"Volume",
@@ -151,7 +151,7 @@ class MarketData(object):
                 }
             )
 
-            open_close_str = f'{open_close['prev_day_close']} - {open_close['today_open']}'
+            open_close_str = f"{open_close['prev_day_close']} - {open_close['today_open']}"
             market_data_rows.append(
                 {
                     "key":"Open/Close",
@@ -160,7 +160,7 @@ class MarketData(object):
             )
 
             if 'revenue' in financials:
-                revenue_str = f'{format_number(financials['revenue'])}'
+                revenue_str = f"{format_number(financials['revenue'])}"
                 market_data_rows.append(
                     {
                         "key":"Revenue",
@@ -169,7 +169,7 @@ class MarketData(object):
                 )
 
             if 'net_income' in financials:
-                net_income_str = f'{format_number(financials['net_income'])}'
+                net_income_str = f"{format_number(financials['net_income'])}"
                 market_data_rows.append(
                     {
                         "key":"Net Income",
@@ -178,7 +178,7 @@ class MarketData(object):
                 )
 
             if 'eps' in financials:
-                eps_str = f'{round(financials['eps'],2)}'
+                eps_str = f"{round(financials['eps'],2)}"
                 market_data_rows.append(
                     {
                         "key":"EPS",
