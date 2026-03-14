@@ -1,6 +1,7 @@
 # Copyright (c) Mike Kipnis (mike.kipnis@gmail.com) - Alpha Research Online
 
 import logging
+from time import sleep
 
 import dash_ag_grid as dag
 from dash import html, dcc, Input, Output, dash
@@ -41,6 +42,9 @@ class EntityGrid:
     def api_settings_id(self):
         return self.entity_grid_id+"_api_settings"
 
+    def api_settings_data_id(self):
+        return self.entity_grid_id+"_api_settings"+".data"
+
     def layout(self):
             return dbc.Container(
                 [
@@ -72,12 +76,16 @@ class EntityGrid:
         def setup_entity_grid(api_settings):
             logger.info(f"Retrieving data {api_settings}")
 
+            if 'end_point' not in api_settings:
+                return []
+
             end_point = api_settings['end_point']
 
+            sleep(1.0)
             response = requests.post(url=api_settings['RAPID_API_URL'] + "/"+ end_point+"/", json=api_settings['payload'], headers=api_settings['headers'])
             values = response.json()
-            if len(values) == 0:
-                return dash.no_update, dash.no_update
+            if len(values) == 0 or response.status_code!=200:
+                return dash.no_update
 
             key = api_settings['key']
             values_list = []
@@ -96,7 +104,7 @@ class EntityGrid:
         )
         def select_first_row_after_sort(virtual_rows):
             if not virtual_rows:
-                return dash.no_update
+                return None
 
             # Select first row from sorted data
             return [virtual_rows[0]]
@@ -108,7 +116,7 @@ class EntityGrid:
         )
         def return_selected_row(selected_rows):
             if not selected_rows:
-                return dash.no_update
+                return None
 
             # Select first row from sorted data
             return [selected_rows[0]]

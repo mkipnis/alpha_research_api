@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import dash
 import dash_bootstrap_components as dbc
 import requests
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output, State, callback_context
 
 import entity_grid
 import market_data
@@ -115,6 +115,21 @@ class StockOwnershipIntel:
                                                     id="rapid-api-warning",
                                                     style={
                                                         "color":"#f09d08",
+                                                        "marginTop": "10px",
+                                                        "fontSize": "14px",
+                                                    },
+                                                ),
+                                            ),
+                                        ]
+                                    ),
+
+                                    dbc.Row(
+                                        [
+                                            dbc.Col(
+                                                html.Div(
+                                                    id="api-call-error",
+                                                    style={
+                                                        "color": "#f09d08",
                                                         "marginTop": "10px",
                                                         "fontSize": "14px",
                                                     },
@@ -241,6 +256,7 @@ class StockOwnershipIntel:
 
                 dcc.Interval(id="startup", n_intervals=0, max_intervals=1),
                 dcc.Store(id="report_dates"),
+                #dcc.Store(id="api-call-error"),
 
             ],
             fluid=True,
@@ -284,7 +300,7 @@ def save_api_key(value):
 def load_api_key(_, stored):
     if stored:
         return stored, dash.no_update
-    return dash.no_update, "Please obtain the RAPID_API_KEY from the link above"
+    return dash.no_update, "816375a8f0mshedda7de3e772d57p106c0ajsnd579f769e1e5"
 
 @app.callback(
     Output("accordion-wrapper", "style"),
@@ -302,6 +318,7 @@ def block_ui(stock_info_set,stock_list):
 
 @app.callback(
     Output("report_dates","data"),
+    Output("api-call-error", "children"),
     Input("rapid-api-key", "data"),
 )
 def setup_filing_dates(rapid_api_key):
@@ -315,7 +332,14 @@ def setup_filing_dates(rapid_api_key):
     response = requests.post(url=API_SETTINGS['RAPID_API_URL'] + "/filing_dates/", json=API_SETTINGS['payload'], headers=API_SETTINGS['headers'])
     filing_dates = response.json()
 
-    return filing_dates
+    if response.status_code == 401:
+        return [], "Invalid RapidAPI key. Please obtain the RAPID_API_KEY from the link above"
+    elif response.status_code == 403:
+        return [], "Access forbidden or subscription problem. Please obtain the RAPID_API_KEY from the link above"
+    elif response.status_code == 429:
+        return [], "Rate limit exceeded. Please obtain the RAPID_API_KEY from the link above"
+
+    return filing_dates, dash.no_update
 
 @app.callback(
     Output("sector-list", "columnDefs"),
@@ -424,9 +448,16 @@ def setup_industries(selected_sector):
 
 @app.callback(
     Output(soi.institution.api_settings_id(), "data"),
+    Input(soi.industry.api_settings_id(), "data"),
     Input(soi.industry.selected_items_id(), "data"),
+    prevent_initial_callback = True
 )
-def setup_institution(selected_industry):
+def setup_institution(industry_api_call, selected_industry):
+
+    triggered = callback_context.triggered
+    if triggered and isinstance(triggered, list):
+        if triggered[0]['prop_id'] == soi.industry.api_settings_data_id():
+            return {}
 
     # Strong guard against invalid selection states
     if selected_industry is None:
@@ -448,9 +479,16 @@ def setup_institution(selected_industry):
 @app.callback(
     Output(soi.stock.api_settings_id(), "data"),
     Input(soi.industry.selected_items_id(), "data"),
+    Input(soi.industry.api_settings_id(), "data"),
     Input(soi.institution.selected_items_id(), "data"),
+    Input(soi.institution.api_settings_id(), "data"),
 )
-def setup_symbols(selected_industry, selected_institution):
+def setup_symbols(selected_industry, selected_industry_api, selected_institution, selected_institution_api):
+
+    triggered = callback_context.triggered
+    if triggered and isinstance(triggered, list):
+        if triggered[0]['prop_id'] == soi.industry.api_settings_data_id() or triggered[0]['prop_id'] == soi.institution.api_settings_data_id():
+            return {}
 
     # Guard against empty or intermediate selection events
     if (

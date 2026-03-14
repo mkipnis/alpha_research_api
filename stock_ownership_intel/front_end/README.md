@@ -9,3 +9,8 @@ pip install -r requirements.txt
 
 gunicorn stock_ownership_intel_ui:server --bind 0.0.0.0:8050
 ```
+
+#### To build and run in Docker
+```
+docker compose up --build
+```
