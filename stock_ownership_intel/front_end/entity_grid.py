@@ -1,6 +1,7 @@
 # Copyright (c) Mike Kipnis (mike.kipnis@gmail.com) - Alpha Research Online
 
 import logging
+from time import sleep
 
 import dash_ag_grid as dag
 from dash import html, dcc, Input, Output, dash
@@ -80,6 +81,7 @@ class EntityGrid:
 
             end_point = api_settings['end_point']
 
+            sleep(0.25)
             response = requests.post(url=api_settings['RAPID_API_URL'] + "/"+ end_point+"/", json=api_settings['payload'], headers=api_settings['headers'])
             values = response.json()
             if len(values) == 0 or response.status_code!=200:
