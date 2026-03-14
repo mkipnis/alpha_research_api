@@ -81,7 +81,7 @@ class EntityGrid:
 
             end_point = api_settings['end_point']
 
-            sleep(0.25)
+            sleep(1.0)
             response = requests.post(url=api_settings['RAPID_API_URL'] + "/"+ end_point+"/", json=api_settings['payload'], headers=api_settings['headers'])
             values = response.json()
             if len(values) == 0 or response.status_code!=200:
