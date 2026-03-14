@@ -300,7 +300,7 @@ def save_api_key(value):
 def load_api_key(_, stored):
     if stored:
         return stored, dash.no_update
-    return dash.no_update, "816375a8f0mshedda7de3e772d57p106c0ajsnd579f769e1e5"
+    return "816375a8f0mshedda7de3e772d57p106c0ajsnd579f769e1e5", "Please obtain the RAPID_API_KEY from the link above"
 
 @app.callback(
     Output("accordion-wrapper", "style"),
