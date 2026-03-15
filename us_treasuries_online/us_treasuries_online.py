@@ -45,13 +45,13 @@ if __name__ == "__main__":
     print("\nRetrieving Available Instruments ...")
     time.sleep(3)
 
-    url_instruments = RAPID_API_URL + "/instruments/"
-    response = requests.post(url_instruments, json=payload, headers=headers)
+    response = requests.post(url=RAPID_API_URL + "/instruments/", json=payload, headers=headers)
     print(json.dumps(response.json(), indent=4))
 
     cusips_to_price = list(response.json()['instruments'].keys())
 
     #################################### Pricing Request ##################################################
+    print("\nSubmitting Pricing Request ...")
     business_date = next(iter(latest_key_rates['key_rates'].keys()))
     payload = {"business_date": business_date,
                "yield_curve": latest_key_rates['key_rates'][business_date],
@@ -60,14 +60,11 @@ if __name__ == "__main__":
     print(json.dumps(payload, indent=4))
     token_response = requests.post(url=RAPID_API_URL + "/curve_price_request/", json=payload, headers=headers)
 
-    print("\nSubmitting Pricing Request ...")
-    time.sleep(3)
-
     print(json.dumps(token_response.json(), indent=4))
 
-    #################################### Pricing Response ##################################################
-    print("\nRetrieving Pricing Request ...")
     time.sleep(3)
+    #################################### Pricing results ##################################################
+    print("\nRetrieving Pricing Results ...")
 
     pricer_response = requests.post(url=RAPID_API_URL + "/curve_price_results/", json=token_response.json(),
                                     headers=headers)
